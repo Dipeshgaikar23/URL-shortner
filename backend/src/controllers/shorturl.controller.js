@@ -4,8 +4,12 @@ import { createShortUrlWithUser, createShortUrlWithoutUser } from "../services/s
 export const createShortUrl = async (req, res) => {
     try {
         const { url } = req.body
+        // console.log(url);
+        
         const shortUrl = await createShortUrlWithoutUser(url)
-        res.send(process.env.APP_URL + shortUrl)
+        // console.log(shortUrl);
+        
+        res.status(201).json({shortUrl: process.env.APP_URL + shortUrl})
     } catch (err) {
         next(err)
     }
