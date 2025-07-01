@@ -3,12 +3,29 @@ import { createShortUrlWithUser, createShortUrlWithoutUser } from "../services/s
 
 export const createShortUrl = async (req, res) => {
     try {
-        const { url } = req.body
-        // console.log(url);
+        const { url, slug } = req.body
+        let shortUrl
         
-        const shortUrl = await createShortUrlWithoutUser(url)
-        // console.log(shortUrl);
+        if(req.user && slug){
+            shortUrl = await createShortUrlWithUser(url, req.user._id, slug)
+        }else if(req.user){
+            shortUrl = await createShortUrlWithUser(url, req.user._id)
+        }
+        else{
+            shortUrl = await createShortUrlWithoutUser(url)
+        }
         
+        res.status(201).json({shortUrl: process.env.APP_URL + shortUrl})
+    } catch (err) {
+        next(err)
+    }
+}
+
+export const createCustomShortUrl = async () =>{
+    try {
+        const { url, slug } = req.body
+        const shortUrl = await createShortUrlWithUser(url, slug)        
+
         res.status(201).json({shortUrl: process.env.APP_URL + shortUrl})
     } catch (err) {
         next(err)
@@ -23,6 +40,5 @@ export const redirectFromShortUrl = async (req, res) => {
     }
     url.clicks += 1
     await url.save()
-    console.log(url)
     res.redirect(url.fullurl)
 }
