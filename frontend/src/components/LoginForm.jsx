@@ -1,20 +1,24 @@
 import { useState } from 'react'
 import { loginUser } from '../apis/user.api'
+import {useSelector} from 'react-redux'
 
 export const LoginForm = ({state}) => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const auth = useSelector((state) => state.auth)
+    // console.log(auth)
 
     const handleSubmit = async () => {
         setError('')
         setLoading(true)
         
         try {
-            await loginUser(email, password)
+            const data = await loginUser(email, password)
             // Redirect or update state on successful login
             // window.location.href = '/' // Simple redirect
+            console.log(data)
             console.log('signing success')
         } catch (err) {
             setError(err.response?.data?.message || 'Invalid Credentials')
