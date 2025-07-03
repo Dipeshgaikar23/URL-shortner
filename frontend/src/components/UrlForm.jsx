@@ -1,20 +1,23 @@
 import { useState } from 'react'
 import axios from 'axios'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { createShortUrl } from '../apis/shorturl.api'
+import { useSelector } from 'react-redux'
 
 export const UrlForm = () => {
-
+    // const queryClient = new useQueryClient()/
     const [url, setUrl] = useState('')
     const [shortUrl, setShortUrl] = useState('')
     const [copied, setCopied] = useState(false)
+    const [customSlug, setCustomSlug] = useState('')
+    const { isAuthenticated } = useSelector((state) => state.auth)
 
     const handleSubmit = async () => {
         console.log('sending');
-
-        const shortUrl = await createShortUrl(url)
-        // console.log(data)
+        const shortUrl = await createShortUrl(url, customSlug)
         setShortUrl(shortUrl)
+        // queryClient.invalidateQueries({ queryKey: ['userUrls'] })
+        // console.log(data)
     }
 
     const handleCopy = () => {
@@ -57,7 +60,23 @@ export const UrlForm = () => {
             {error}
           </div>
         )} */}
+                {isAuthenticated && (
+                    <div className='mt-4'>
+                        <label htmlFor="customSlug" className='block text-sm font-medium text-gray-700 mb-1'>
+                            Custom URL (optional)
+                        </label>
+                        <input
+                            type="text"
+                            id='customSlug'
+                            value={customSlug}
+                            onChange={(event) => setCustomSlug(event.target.value)}
+                            placeholder='Enter custom url'
+                            className='w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2'
+                        />
+                    </div>
+                )
 
+                }
                 {shortUrl && (
                     <div className="mt-6">
                         <h2 className="text-lg font-medium mb-2">Your shortened URL:</h2>

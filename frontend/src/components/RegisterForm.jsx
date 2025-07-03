@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import { registerUser } from '../apis/user.api'
+import { useNavigate } from '@tanstack/react-router'
+import { useDispatch } from 'react-redux'
+
 
 export const RegisterForm = ({state}) => {
     const [name, setName] = useState('')
@@ -7,6 +10,8 @@ export const RegisterForm = ({state}) => {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -15,8 +20,9 @@ export const RegisterForm = ({state}) => {
         
         try {
             await registerUser(name, email, password)
+            navigate({ to: "/dashboard" })
             // Redirect to login page on successful registration
-            window.location.href = '/login'
+            // window.location.href = '/login'
         } catch (err) {
             setError(err.response?.data?.message || 'Registration failed')
         } finally {
