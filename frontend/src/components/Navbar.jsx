@@ -1,21 +1,24 @@
 import { useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { logoutUser } from '../apis/user.api'
+import { useDispatch, useSelector } from 'react-redux'
+import { logout } from '../store/slice/authSlice'
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   // Check if user is logged in (you might want to use a more robust method)
-  const isLoggedIn = document.cookie.includes('token=')
+  const {isAuthenticated} = useSelector((state) => state.auth)
 
   const handleLogout = async () => {
     try {
       await logoutUser()
       // Redirect to home page after logout
+      dispatch(logout())
       navigate({ to: '/' })
-      // Refresh the page to clear any user state
-      window.location.reload()
+      
     } catch (error) {
       console.error('Logout failed:', error)
     }
@@ -43,7 +46,7 @@ export const Navbar = () => {
                 Home
               </Link>
               
-              {isLoggedIn ? (
+              {isAuthenticated ? (
                 <>
                   <Link 
                     to="/dashboard" 
@@ -106,7 +109,7 @@ export const Navbar = () => {
               Home
             </Link>
             
-            {isLoggedIn ? (
+            {isAuthenticated ? (
               <>
                 <Link
                   to="/dashboard"
