@@ -12,7 +12,7 @@ import { attachUser } from './src/utils/attachuser.helper.js'
 
 
 const app = express()
-dotenv.config("./.env")
+dotenv.config({ path: './.env' }); 
 
 
 app.use(cors({
