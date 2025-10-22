@@ -12,26 +12,26 @@ export const LoginForm = ({ state }) => {
     const auth = useSelector((state) => state.auth)
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    // console.log(auth)
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         setError('')
         setLoading(true)
 
         try {
             const data = await loginUser(email, password)
             dispatch(login(data.user))
-            // Redirect or update state on successful login
-            // window.location.href = '/' // Simple redirect
             navigate({ to: "/dashboard" })
-            console.log(auth)
-            console.log('signing success')
+            console.log('Login successful')
         } catch (err) {
             setError(err.response?.data?.message || 'Invalid Credentials')
         } finally {
             setLoading(false)
         }
     }
+
+    // Disable button if any field is empty
+    const isDisabled = email.trim() === '' || password.trim() === ''
 
     return (
         <div className="w-full max-w-md bg-white rounded-lg shadow-md p-6">
@@ -43,7 +43,7 @@ export const LoginForm = ({ state }) => {
                 </div>
             )}
 
-            <form className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
                         Email
@@ -51,7 +51,7 @@ export const LoginForm = ({ state }) => {
                     <input
                         type="email"
                         id="email"
-                        placeholder='example@email.com'
+                        placeholder="example@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -66,7 +66,7 @@ export const LoginForm = ({ state }) => {
                     <input
                         type="password"
                         id="password"
-                        placeholder='************'
+                        placeholder="************"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -75,10 +75,13 @@ export const LoginForm = ({ state }) => {
                 </div>
 
                 <button
-                    onClick={handleSubmit}
                     type="submit"
-                    disabled={loading}
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+                    disabled={loading || isDisabled}
+                    className={`w-full py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                        ${loading || isDisabled
+                            ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                            : 'bg-blue-500 text-white hover:bg-blue-600'
+                        }`}
                 >
                     {loading ? 'Logging in...' : 'Login'}
                 </button>
@@ -87,7 +90,10 @@ export const LoginForm = ({ state }) => {
             <div className="mt-4 text-center text-sm">
                 <p>
                     Don't have an account?{' '}
-                    <span onClick={() => state(false)} className="curser:pointer text-blue-500 hover:text-blue-700">
+                    <span
+                        onClick={() => state(false)}
+                        className="cursor-pointer text-blue-500 hover:text-blue-700"
+                    >
                         Register
                     </span>
                 </p>
