@@ -13,6 +13,7 @@ import { attachUser } from './src/utils/attachuser.helper.js';
 dotenv.config({ path: './.env' });
 
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 // ✅ Unified and dynamic CORS config
 const allowedOrigins = [
@@ -45,7 +46,8 @@ app.get('/:id', redirectFromShortUrl);
 
 app.use(errorHandler);
 
-app.listen(3000, () => {
+
+app.listen(PORT, () => {
   connectDB();
-  console.log("✅ App is listening on port 3000");
+  console.log(`✅ App is listening on port ${PORT}`);
 });
